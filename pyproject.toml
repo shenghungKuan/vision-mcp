@@ -1,0 +1,10 @@
+[project]
+name = "vision-mcp"
+version = "0.1.0"
+description = "A mcp for image processing"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.6.0",
+]
