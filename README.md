@@ -16,3 +16,8 @@ source .venv/bin/activate
 ```
 uv add "mcp[cli]" httpx
 ```
+
+or sync with the pyproject.toml:
+```
+uv sync
+```
