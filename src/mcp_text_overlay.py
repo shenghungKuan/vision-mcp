@@ -3,7 +3,7 @@ import requests
 from typing import Any
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
-
+from src.models.stable_diffusion_image_generator import generate_image
 load_dotenv()
 
 # Initialize FastMCP server
@@ -33,6 +33,22 @@ async def text_overlay(blend_mode='normal', image_url: str="", text=""):
 
     response = requests.post(url, json=data, headers=headers)
     return response.content
+
+@mcp.tool()
+def gen_image(prompt, steps) -> str:
+    """
+    Generates an image from a prompt using Stable Diffusion 3.5 and returns pre-signed URL
+
+    Args:
+        prompt (str): The prompt for the image generation.
+        steps (int): Number of inference steps (default: 10)
+
+    Returns:
+        str: File path to the generated image.
+    """
+
+    return generate_image(prompt, steps)
+
 
 if __name__ == "__main__":
     # Initialize and run the server

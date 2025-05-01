@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: vision-mcp
+Version: 0.1.0
+Summary: A mcp for image processing
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: httpx>=0.28.1
+Requires-Dist: mcp[cli]>=1.6.0
+
+# vision-mcp
+
+## Set Up
+1. Install uv:
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+2. Create a virtual environment:
+```
+uv venv
+source .venv/bin/activate
+```
+
+3. Install dependencies:
+```
+uv add "mcp[cli]" httpx
+```
