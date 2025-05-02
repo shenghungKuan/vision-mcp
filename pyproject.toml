@@ -13,4 +13,6 @@ dependencies = [
     "boto3>=1.38.6",
     "dotenv>=0.9.9",
     "diffusers>=0.33.1",
+    "torch>=2.7.0",
+    "transformers>=4.51.3",
 ]
