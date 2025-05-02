@@ -1,6 +1,6 @@
 import torch
 from diffusers import StableDiffusion3Pipeline
-from src.services.s3.s3_service import upload_image_from_memory
+from services.s3.s3_service import upload_image_from_memory
 
 
 def generate_image(prompt, steps = 10):
