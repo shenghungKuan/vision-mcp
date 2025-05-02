@@ -47,7 +47,7 @@ def text_overlay(blend_mode='normal', image_url: str = "", text=""):
         "margin_y": 300,
         "outline_color": "#11ff00",
         "outline_size": 0,
-        "text": "TRAVEL\n TODAY",
+        "text": text,
         "text_underlay": False,
         "wrap": 50
     }
