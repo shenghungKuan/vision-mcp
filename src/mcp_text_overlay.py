@@ -1,20 +1,15 @@
-import os
-import requests
-from typing import Any
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 from src.models.stable_diffusion_image_generator import generate_image
+from src.services.overlay.overlay import text_overlay
+
 load_dotenv()
 
 # Initialize FastMCP server
 mcp = FastMCP("vision-mcp")
 
-# Constants
-api_key = os.getenv("x-api-key")
-url = "https://api.segmind.com/v1/text-overlay"
-
 @mcp.tool()
-async def text_overlay(blend_mode='normal', image_url: str="", text=""):
+async def gen_text_overlay(blend_mode='normal', image_url: str="", text=""):
     """
     Overlay text on an image using Segmind API.
     Args:
@@ -24,18 +19,10 @@ async def text_overlay(blend_mode='normal', image_url: str="", text=""):
     Returns:
         Any: The binary of the processed image.
     """
-    data = {
-        "blend_mode": blend_mode,
-        "image_url": image_url,
-        "text": text
-    }
-    headers = {'x-api-key': api_key}
-
-    response = requests.post(url, json=data, headers=headers)
-    return response.content
+    return text_overlay(blend_mode=blend_mode, image_url=image_url, text=text)
 
 @mcp.tool()
-def gen_image(prompt, steps) -> str:
+async def gen_image(prompt, steps) -> str:
     """
     Generates an image from a prompt using Stable Diffusion 3.5 and returns pre-signed URL
 

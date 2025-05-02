@@ -15,9 +15,7 @@ def upload_image_from_memory(bucket_name, image, object_key, expires_in=3600):
     :param expires_in: Expiration time for pre-signed URL (in seconds)
     :return: Pre-signed URL
     """
-    buffer = io.BytesIO()
-    image.save(buffer, format='JPEG')
-    buffer.seek(0)
+    buffer = io.BytesIO(image)
 
     try:
         s3.upload_fileobj(
