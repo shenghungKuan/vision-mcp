@@ -2,9 +2,10 @@ import os
 import requests
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
-
-from src.models.stable_diffusion_image_generator import generate_image
-from src.services.s3.s3_service import upload_image_from_memory
+from PIL import Image
+from io import BytesIO
+from models.stable_diffusion_image_generator import generate_image
+from services.s3.s3_service import upload_image_from_memory
 
 load_dotenv()
 
@@ -16,7 +17,7 @@ api_key = os.getenv("x-api-key")
 url = "https://api.segmind.com/v1/text-overlay"
 
 
-def text_overlay(blend_mode='normal', image_url: str = "", text=""):
+def text_overlay(blend_mode='normal', image_url: str = "", text="", out_dir="data/output.jpg"):
     """
     Overlay text on an image using Segmind API and upload it to S3.
 
@@ -24,10 +25,8 @@ def text_overlay(blend_mode='normal', image_url: str = "", text=""):
         blend_mode (str): The blend mode to use for the overlay.
         image_url (str): The URL of the image to overlay text on.
         text (str): The text to overlay on the image.
-        api_key (str): Your API key for Segmind API.
-        url (str): The URL for the Segmind API.
     Returns:
-        Any: The binary of the processed image or None if there was an error.
+        str: A message of success, otherwise None.
     """
     print(image_url)
     # Request payload
@@ -61,7 +60,10 @@ def text_overlay(blend_mode='normal', image_url: str = "", text=""):
         if response.status_code == 200:
             response_content = response.content
             # Assuming upload_image_from_memory accepts bytes (if not, modify accordingly)
-            return upload_image_from_memory("emptorix-images", image=response_content, object_key="test")
+            image = Image.open(BytesIO(response_content))
+            image.save(out_dir, format="JPEG")
+            image.show()
+            return "Successfully processed and saved the image."
         else:
             print(f"❌ Error: {response.status_code}, {response.text}")
             return None

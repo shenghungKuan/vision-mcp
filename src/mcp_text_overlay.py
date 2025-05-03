@@ -1,7 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
-from src.models.stable_diffusion_image_generator import generate_image
-from src.services.overlay.overlay import text_overlay
+from models.stable_diffusion_image_generator import generate_image
+from services.overlay.overlay import text_overlay
 
 load_dotenv()
 
@@ -9,17 +9,18 @@ load_dotenv()
 mcp = FastMCP("vision-mcp")
 
 @mcp.tool()
-async def gen_text_overlay(blend_mode='normal', image_url: str="", text=""):
+async def gen_text_overlay(blend_mode='normal', image_url: str="", text="", out_dir="data/output.jpg") -> str:
     """
     Overlay text on an image using Segmind API.
     Args:
         blend_mode (str): The blend mode to use for the overlay.
         image_url (str): The URL of the image to overlay text on.
         text (str): The text to overlay on the image.
+        out_dir (str): The output directory for the processed image.
     Returns:
-        Any: The binary of the processed image.
+        str: The message from the text_overlay function.
     """
-    return text_overlay(blend_mode=blend_mode, image_url=image_url, text=text)
+    return text_overlay(blend_mode=blend_mode, image_url=image_url, text=text, out_dir=out_dir)
 
 @mcp.tool()
 async def gen_image(prompt, steps) -> str:
