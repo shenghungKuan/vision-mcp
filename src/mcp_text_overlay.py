@@ -23,7 +23,7 @@ async def gen_text_overlay(blend_mode='normal', image_url: str="", text="", out_
     return text_overlay(blend_mode=blend_mode, image_url=image_url, text=text, out_dir=out_dir)
 
 @mcp.tool()
-async def gen_image(prompt, steps) -> str:
+async def gen_image(prompt: str, steps: int) -> str:
     """
     Generates an image from a prompt using Stable Diffusion 3.5 and returns pre-signed URL
 
@@ -32,7 +32,7 @@ async def gen_image(prompt, steps) -> str:
         steps (int): Number of inference steps (default: 10)
 
     Returns:
-        str: File path to the generated image.
+        str: Returns image_url to the generated image.
     """
 
     return generate_image(prompt, steps)

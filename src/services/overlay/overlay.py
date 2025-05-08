@@ -4,8 +4,8 @@ from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 from PIL import Image
 from io import BytesIO
-from models.stable_diffusion_image_generator import generate_image
-from services.s3.s3_service import upload_image_from_memory
+# from models.stable_diffusion_image_generator import generate_image
+# from services.s3.s3_service import upload_image_from_memory
 
 load_dotenv()
 
@@ -28,7 +28,7 @@ def text_overlay(blend_mode='normal', image_url: str = "", text="", out_dir="dat
     Returns:
         str: A message of success, otherwise None.
     """
-    print(image_url)
+
     # Request payload
     data = {
         "align": "right",
@@ -65,16 +65,16 @@ def text_overlay(blend_mode='normal', image_url: str = "", text="", out_dir="dat
             image.show()
             return "Successfully processed and saved the image."
         else:
-            print(f"❌ Error: {response.status_code}, {response.text}")
+            print(f" Error: {response.status_code}, {response.text}")
             return None
 
     except requests.exceptions.RequestException as e:
-        print(f"❌ Error during the request: {e}")
+        print(f" Error during the request: {e}")
         return None
 
     except Exception as e:
-        print(f"❌ Error during image processing: {e}")
+        print(f" Error during image processing: {e}")
         return None
 
 if __name__ == '__main__':
-    print(text_overlay(image_url=generate_image("Anime Astronaut in space"), text="Viva Las Vegas"))
+    print(text_overlay(image_url="https://emptorix-images.s3.amazonaws.com/X0tjDa1MBdQ8pH31DE3-b_2184fff4af614bebac3b43f61c02f7b3.jpg?AWSAccessKeyId=AKIAVFIWI5UPHAHZAIO3&Signature=2QMnRJN1Qnj%2BpAGXDszsGb3Zu%2FA%3D&Expires=1746489213", text="Hello World"))

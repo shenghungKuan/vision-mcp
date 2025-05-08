@@ -24,21 +24,18 @@ def upload_image_from_memory(bucket_name, image, object_key, expires_in=3600):
             object_key,
             ExtraArgs={"ContentType": "image/jpeg"}
         )
-        print(f"✅ Uploaded image to s3://{bucket_name}/{object_key}")
-
         url = s3.generate_presigned_url(
             'get_object',
             Params={'Bucket': bucket_name, 'Key': object_key},
             ExpiresIn=expires_in
         )
-        print("✅ Pre-signed URL generated.")
         return url
 
     except NoCredentialsError:
-        print("❌ AWS credentials not found.")
+        print("AWS credentials not found.")
         return None
     except Exception as e:
-        print(f"❌ Error uploading image: {e}")
+        print(f" Error uploading image: {e}")
         return None
 
 def get_pre_signed_image_url(bucket_name, object_key, expires_in=3600):
@@ -60,3 +57,6 @@ def get_pre_signed_image_url(bucket_name, object_key, expires_in=3600):
     except Exception as e:
         print(f"❌ Error generating pre-signed URL: {e}")
         return None
+
+if __name__ == '__main__':
+    print(get_pre_signed_image_url("emptorix-images", "X0tjDa1MBdQ8pH31DE3-b_2184fff4af614bebac3b43f61c02f7b3.jpg"))
