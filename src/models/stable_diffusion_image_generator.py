@@ -26,4 +26,4 @@ def generate_image(prompt, steps = 25):
     return upload_image_from_memory("emptorix-images", image_to_bytes(image), "test")
 
 if __name__ == '__main__':
-    print(generate_image("astronaut in the style of a silhouette illustration with the text 'Hello World in the background'"))
+    print(generate_image("grafitti on a brick wall that saya 'Hello World'"))
