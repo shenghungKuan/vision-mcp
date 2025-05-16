@@ -93,47 +93,38 @@ caption → detect text → inpaint → regenerate caption—allowing rich, agen
 Persistent Storage: Integration with S3 enables persistent image histories, version control, and remote collaboration.
 
 ## 5. Findings: Fine-Tuning for Line Art and Text Rendering
-Fine-tuning Stable Diffusion for line art styles and text placement presented several technical and architectural challenges. While stylization proved moderately successful, consistent and legible text rendering remained difficult.
 
-1. Line Art & Style Fine-Tuning
-Successes:
+### Limitations on Training Text for Stable Diffusion
+Data Quality and Licensing: Training Stable Diffusion models requires vast amounts of text-image pair data. Much of the high-quality captioned image data is either proprietary or lacks clear licensing, limiting the scope of publicly available training sets.
 
-The model adapted well to clean, high-contrast style edge maps using lightweight LoRA tuning.
+Alignment Challenges: Aligning text prompts with desired visual outputs, is fragile and subtle variations in wording can lead to vastly different results, indicating that training text often fails to encode the intent clearly or consistently.
 
-Visual fidelity to stylistic prompts improved after just a few thousand training steps on curated datasets (Duo Tone, Arsto Style).
+Granularity of Control: Text descriptions frequently lack sufficient detail for fine-grained control of the output, especially in complex scenes or specific semantic edits.
 
-Challenges:
+### Hardware Limitations for Stable Diffusion 3
+Memory Requirements: Stable Diffusion 3 (SD3) models are significantly larger than previous versions, often requiring upwards of 24–48 GB of GPU memory for inference and even more for training. This restricts development to users with high-end consumer or enterprise-grade hardware (e.g., A100, H100).
 
-The model frequently hallucinated fine details in low-context areas, introducing unwanted textures or noise around flat regions.
+Inference Latency: Even with optimized inference backends, SD3 introduces longer render times due to increased model depth and complexity, particularly when using attention-heavy architectures.
 
-The model was unable to train in a line art fashion, perhaps because of the empty space or limited data for training.
+Distributed Training Complexity: Scaling training across multiple GPUs requires sophisticated pipeline and data parallelism strategies. As a result, experimentation and prototyping are resource-intensive.
 
-2. Text Rendering and Placement
-Challenges:
+Energy Consumption: Training SD3 models is power-intensive, making sustainability a concern for independent researchers and institutions with limited infrastructure.
 
-Text generation remained highly unstable: letters were often malformed, inconsistent, or merged together.
+### MCP Server Limitations with Long-Running Clients (>30s)
+Timeout Constraints: Most MCP (Model Context Protocol) servers assume near real-time interaction with clients. Jobs requiring more than 30 seconds often exceed default timeout windows, leading to disconnections or incomplete responses.
 
-Despite prompt engineering (e.g., "clear white text on black background"), the model failed to learn proper glyph structure without explicit supervision.
+Lack of Native Async/Job Queuing: Many MCP implementations lack built-in support for background task queuing or job continuation. This makes it difficult to handle long-running or compute-heavy requests gracefully.
 
-Alignment within scenes (e.g., signage or poster text) was erratic and rarely matched intended positions unless overlaid externally via inpainting.
+Statefulness and Checkpointing: Persistent state across long jobs is not reliably managed. Unless explicitly implemented, any failure in communication may result in loss of job progress.
 
-Lack of language modeling in the image generation pipeline meant Stable Diffusion treated text as a visual texture, not structured content.
+Scalability and Load Management: MCP servers can become bottlenecks when handling concurrent long-running tasks, especially in multi-client scenarios, unless offloading and load balancing mechanisms are in place.
 
-Inpainting Workaround:
+### Challenges in Programmatically Inpainting with Text Guidance
+Text-to-Mask Ambiguity: Automatically generating masks from text (e.g., "remove the man on the left") requires robust scene understanding. Existing models struggle with spatial disambiguation without detailed segmentation or auxiliary models.
 
-Inpainting worked reasonably well for removing text or filling background content where text had been removed.
+Prompt Localization: Mapping abstract or vague textual prompts to precise spatial regions is not well-supported by current inpainting pipelines. This hampers automation in iterative or fine-control applications.
 
-However, re-inserting legible text via inpainting was ineffective without external OCR guidance or post-processing.
-
-3. Dataset Limitations
-Curating datasets with both style-specific visuals and accurate text annotations proved time-consuming and often inconsistent.
-
-Many public datasets had poor OCR quality, mismatched bounding boxes, or lacked the stylistic variety required for robust generalization.
-
-4. Tooling Observations
-DreamBooth and LoRA were effective for style transfer (e.g., astronaut line art), but not for structured symbol control like typography.
-
-ControlNet offered better localization when conditioned on layout or edge maps but still struggled with fine-grained text details.
+Visual Context Awareness: Text prompts do not inherently encode the context of the surrounding image. As a result, inpainting can produce semantically or stylistically inconsistent patches unless the prompt is overly prescriptive.
 
 
 ## 7. Results
@@ -182,6 +173,12 @@ ControlNet offered better localization when conditioned on layout or edge maps b
 ## 6. Conclusion
 By combining the generative power of Stable Diffusion with structured tool deployment via MCP, researchers and developers can create powerful systems for text understanding and manipulation in images. Fine-tuning models on specific domains using Hugging Face infrastructure enhances accuracy and relevance, while the MCP server paradigm ensures these capabilities are easily accessible and modular.
 
+
+Our exploration demonstrated that training visual styles on Stable Diffusion can be successfully achieved with moderate resources, particularly when fine-tuning on well-prepared image datasets. However, extending this to training or fine-tuning the model's text-conditioning components proved infeasible within the time and computational limits of this project. High-quality text-image pair datasets are both scarce and large, and the compute required to meaningfully train or adapt the text encoder exceeded our available infrastructure.
+
+Similarly, while the MCP server framework offered a structured way to integrate vision models, its effectiveness was constrained by resource limitations. The primary bottlenecks were related to the high computational cost of vision model inference and the lack of support for long-running jobs. Reducing inference steps and optimizing model efficiency became necessary trade-offs to operate within the protocol's response constraints.
+
+Overall, the project highlighted the potential of style transfer and image manipulation using Stable Diffusion, while also underscoring the importance of scalable infrastructure, high-quality training data, and protocol-aware model optimization when working with generative vision systems and MCP servers.
 ## 7. Future Work
 Improve text rendering accuracy in generated images.
 
